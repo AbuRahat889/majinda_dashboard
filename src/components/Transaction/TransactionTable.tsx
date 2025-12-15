@@ -14,6 +14,7 @@ const TransactionTable = () => {
 
   const totalPages = transictionList?.data?.meta?.totalPage || 1;
   const currentItems = transictionList?.data?.data || [];
+  console.log(currentItems);
 
   if (isLoading) {
     return <FullTableSkeleton />;
@@ -27,7 +28,6 @@ const TransactionTable = () => {
             <th className="py-4 px-4">#</th>
             <th className="py-4 px-4">User</th>
             <th className="py-4 px-4">Transaction ID</th>
-            <th className="py-4 px-4">Product</th>
             <th className="py-4 px-4">Payment Method</th>
             <th className="py-4 px-4">Date</th>
             <th className="py-4 px-4">Amount</th>
@@ -49,8 +49,6 @@ const TransactionTable = () => {
                 {/* Transaction ID */}
                 <td className="py-2 px-4">{info.transactionId}</td>
 
-                {/* Product Name */}
-                <td className="py-2 px-4">{info.productName}</td>
                 {/* Payment Method */}
                 <td className="py-2 px-4 capitalize">{info.paymentMethod}</td>
 
