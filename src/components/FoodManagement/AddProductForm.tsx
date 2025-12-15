@@ -159,7 +159,7 @@ export default function AddProductForm() {
               type="submit"
               className="bg-primaryColor text-white py-5 rounded-lg font-medium w-full"
             >
-              {isLoading || isUpdating ? <Loader /> : "Create Food Item"}
+              {isLoading || isUpdating ? <Loader /> : "Create Medicin Item"}
             </Button>
           </form>
         </FormProvider>

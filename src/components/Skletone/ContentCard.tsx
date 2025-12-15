@@ -1,11 +1,11 @@
 export default function ContentCardSkeleton() {
   return (
     <>
-      <div className="flex flex-wrap gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 h-full overflow-y-auto">
         {Array.from({ length: 10 }).map((_, idx) => (
           <div
             key={idx}
-            className="relative bg-white rounded-2xl shadow-lg overflow-hidden w-80 max-w-sm animate-pulse mb-10"
+            className="relative bg-white rounded-2xl shadow-lg overflow-hidden w-full animate-pulse mb-10"
           >
             {/* Delete Icon Placeholder */}
             <div className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-300 rounded-full" />

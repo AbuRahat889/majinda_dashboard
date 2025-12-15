@@ -64,6 +64,7 @@ export default function AddCategory({
         if (res?.success) {
           toast.success(res?.message || "Category updated successfully");
           setIsModalOpen(false);
+          reset();
         }
       } else {
         const res = await createCategoryFN(formData).unwrap();
@@ -90,10 +91,8 @@ export default function AddCategory({
             placeholder="Type your documents name"
             className="bg-[#e8e8e9]"
           />
-
           {/* Upload Image */}
           <UploadMedia name="photos" />
-
           {/* Submit Button */}
           <Button
             type="submit"

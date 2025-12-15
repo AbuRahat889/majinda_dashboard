@@ -3,6 +3,8 @@ import { useUpdateOrdersMutation } from "@/redux/api/orderApi";
 import { toast } from "react-toastify";
 import TableSkeleton from "../Skletone/Table";
 import { useState } from "react";
+import Modal from "../ui/modal";
+import OrderDetails from "./OrderDetails";
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-800",
@@ -16,7 +18,6 @@ interface Props {
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
-  activeTab?: number;
 }
 
 const OrderTable = ({
@@ -24,9 +25,11 @@ const OrderTable = ({
   isLoading,
   isFetching,
   isError,
-  activeTab,
 }: Props) => {
   const [selectedId, setSelectedId] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [item, setItem] = useState<any>(null);
+
   const [updateOrderStatus, { isLoading: updateing }] =
     useUpdateOrdersMutation();
 
@@ -55,45 +58,46 @@ const OrderTable = ({
           <thead className="bg-white">
             <tr className="text-[#667085] text-left text-sm font-semibold border-b">
               <th className="py-4 px-4">#</th>
-              <th className="py-4 px-4">Customer Name</th>
+              <th className="py-4 px-4">Customer</th>
               <th className="py-4 px-4">Phone</th>
-              <th className="py-4 px-4">Product</th>
-              <th className="py-4 px-4">Quantity</th>
               <th className="py-4 px-4">Address</th>
+              <th className="py-4 px-4">Total Items</th>
+              <th className="py-4 px-4">Total Price</th>
+              <th className="py-4 px-4">Delivery Fee</th>
+              <th className="py-4 px-4">Tax</th>
               <th className="py-4 px-4">Date</th>
               <th className="py-4 px-4">Status</th>
-              {activeTab !== 3 && <th className="py-4 px-4 ">Actions</th>}
+              <th className="py-4 px-4">Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentItems.map((order: any, index: number) => (
-              <tr
-                key={order.id || index}
-                className="text-sm text-textColor font-normal leading-normal hover:bg-red-50 py-5 "
-              >
-                <td className="py-5 ">{index + 1}</td>
-                <td className="py-2 px-4 text-left">{order.user.fullName}</td>
-                <td className="py-2 px-4 text-left">
-                  {order.user.phoneNumber}
+              <tr key={index} className="text-sm hover:bg-red-50 border-b">
+                <td className="py-4 px-4 text-left">{index + 1}</td>
+
+                <td className="py-4 px-4 text-left">{order.user?.fullName}</td>
+
+                <td className="py-4 px-4 text-left">
+                  {order.user?.phoneNumber}
                 </td>
-                <td className="py-2 px-4 text-left">{order.product.name}</td>
-                {/* <td className="py-2 px-4 text-left">
-                  {order.OrderVariant.map((v: any) => v.variant.name).join(
-                    ", "
-                  )}
-                </td> */}
-                <td className="py-2 px-4 text-left">{order.quantity}</td>
-                <td className="py-2 px-4 text-left">
+                <td className="py-4 px-4 text-left">
                   {order.street}, {order.city}
                 </td>
-                <td className="py-2 px-4 text-left">
-                  {order.createdAt
-                    ? new Date(order.createdAt)
-                        .toLocaleDateString("en-GB")
-                        .replace(/\//g, "-")
-                    : ""}
+
+                <td className="py-4 px-4 text-left">
+                  {order?.OrderItem?.length}
                 </td>
-                <td className="py-2 px-4 text-left">
+                <td className="py-4 px-4 text-left">{order?.totalAmount}</td>
+                <td className="py-4 px-4 text-left">{order?.deliveryFee}</td>
+                <td className="py-4 px-4 text-left">{order?.tax}</td>
+
+                <td className="py-4 px-4 text-left">
+                  {new Date(order.createdAt)
+                    .toLocaleDateString("en-GB")
+                    .replace(/\//g, "-")}
+                </td>
+
+                <td className="py-4 px-4 text-left">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
                       statusColors[order.status] || "bg-gray-200 text-gray-800"
@@ -102,41 +106,59 @@ const OrderTable = ({
                     {order.status}
                   </span>
                 </td>
-                {(order?.status === "PROCESSING" ||
-                  order?.status === "PENDING") && (
-                  <td className="py-2 px-4  ">
-                    <div className="flex gap-2 items-end">
-                      <button
-                        onClick={() => {
-                          handleStatusChange(order?.id, "CANCELLED");
-                        }}
-                        className="bg-[#fae6e6] rounded-full text-primaryColor px-4 py-1"
-                      >
-                        Cancle
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleStatusChange(
-                            order?.id,
-                            order.status === "PENDING"
-                              ? "PROCESSING"
-                              : "DELIVERED"
-                          );
-                        }}
-                        className="bg-primaryColor rounded-full text-white px-4 py-1"
-                      >
-                        {updateing && selectedId === order?.id
-                          ? "Updating..."
-                          : "Accept"}
-                      </button>
-                    </div>
-                  </td>
-                )}
+
+                <td className="py-4 px-4 text-left">
+                  <div className="flex gap-2">
+                    {(order.status === "PENDING" ||
+                      order.status === "PROCESSING") && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() =>
+                            handleStatusChange(order.id, "CANCELLED")
+                          }
+                          className="bg-[#fae6e6] rounded-full text-[#cf0607] px-4 py-1"
+                        >
+                          Cancel
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleStatusChange(
+                              order.id,
+                              order.status === "PENDING"
+                                ? "PROCESSING"
+                                : "DELIVERED"
+                            )
+                          }
+                          className="bg-primaryColor rounded-full text-white px-4 py-1"
+                        >
+                          {updateing && selectedId === order.id
+                            ? "Updating..."
+                            : "Accept"}
+                        </button>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        setItem(order);
+                      }}
+                      className="bg-[#e9effd] rounded-full text-[#2563eb] px-4 py-1"
+                    >
+                      view details
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <Modal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen}>
+        <OrderDetails item={item} />
+      </Modal>
     </div>
   );
 };

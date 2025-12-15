@@ -60,8 +60,6 @@ export default function FoodCard({ content }: CarCardProps) {
     }
   };
 
-  console.log(content, "dfds");
-
   return (
     <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden w-full">
       {/* Image */}
@@ -69,7 +67,7 @@ export default function FoodCard({ content }: CarCardProps) {
         <Image
           src={content?.image || fallbackCarImage}
           alt="product image"
-          className="object-cover h-44 w-full"
+          className="object-fill h-48 w-full"
           height={500}
           width={500}
         />
