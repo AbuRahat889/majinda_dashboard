@@ -14,7 +14,6 @@ const TransactionTable = () => {
 
   const totalPages = transictionList?.data?.meta?.totalPage || 1;
   const currentItems = transictionList?.data?.data || [];
-  console.log(currentItems);
 
   if (isLoading) {
     return <FullTableSkeleton />;

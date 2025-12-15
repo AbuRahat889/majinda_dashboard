@@ -26,7 +26,10 @@ const OrderTable = ({
   isFetching,
   isError,
 }: Props) => {
-  const [selectedId, setSelectedId] = useState<string>("");
+  const [loadingAction, setLoadingAction] = useState<{
+    orderId: string;
+    action: "CANCELLED" | "DELIVERED" | "PROCESSING" | null;
+  }>({ orderId: "", action: null });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [item, setItem] = useState<any>(null);
 
@@ -34,7 +37,7 @@ const OrderTable = ({
     useUpdateOrdersMutation();
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
-    setSelectedId(orderId);
+    setLoadingAction({ orderId, action: newStatus as any });
     try {
       const updateInfo = {
         orderId: orderId,
@@ -118,7 +121,11 @@ const OrderTable = ({
                           }
                           className="bg-[#fae6e6] rounded-full text-[#cf0607] px-4 py-1"
                         >
-                          Cancel
+                          {updateing &&
+                          loadingAction.orderId === order.id &&
+                          loadingAction.action === "CANCELLED"
+                            ? "Updating..."
+                            : "Cancel"}
                         </button>
 
                         <button
@@ -132,7 +139,10 @@ const OrderTable = ({
                           }
                           className="bg-primaryColor rounded-full text-white px-4 py-1"
                         >
-                          {updateing && selectedId === order.id
+                          {(updateing &&
+                            loadingAction.orderId === order.id &&
+                            loadingAction.action === "PROCESSING") ||
+                          loadingAction.action === "DELIVERED"
                             ? "Updating..."
                             : "Accept"}
                         </button>

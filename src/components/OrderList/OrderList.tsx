@@ -20,9 +20,6 @@ export default function OrderList() {
 
   const totalPages = data?.data?.meta?.totalPage;
   const currentItems = data?.data?.data || [];
-
-  console.log(data);
-
   const onSearchChange = (value: string) => {
     setSearchValue(value);
   };
