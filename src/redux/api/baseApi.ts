@@ -32,5 +32,6 @@ export const baseApi = createApi({
     "dashboard",
     "categories",
     "reviews",
+    "notifications",
   ],
 });

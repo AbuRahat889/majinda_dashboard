@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import image from "@/assets/logo.svg";
-import logo2 from "@/assets/logo.svg";
+import image from "@/assets/logo.jpg";
+import logo2 from "@/assets/logo.jpg";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useState } from "react";
